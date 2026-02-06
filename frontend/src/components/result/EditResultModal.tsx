@@ -65,7 +65,7 @@ export function EditResultModal({ result, isOpen, onClose }: EditResultModalProp
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Edytuj wynik">
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         <Input
           label="Imię *"
           {...register('athleteName', {
@@ -76,27 +76,29 @@ export function EditResultModal({ result, isOpen, onClose }: EditResultModalProp
         />
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Płeć *
-          </label>
-          <div className="flex gap-4">
-            <label className="flex items-center cursor-pointer">
+          <label className="block text-sm font-medium text-slate-900 mb-3">Płeć *</label>
+          <div className="flex gap-5">
+            <label className="flex items-center cursor-pointer group">
               <input
                 type="radio"
                 value="M"
                 {...register('gender', { required: true })}
-                className="mr-2 h-4 w-4 text-primary-600 focus:ring-primary-500"
+                className="mr-2.5 h-4 w-4 text-primary-600 focus:ring-primary-500"
               />
-              <span>Mężczyzna</span>
+              <span className="text-slate-900 group-hover:text-primary-600 transition-colors duration-200">
+                Mężczyzna
+              </span>
             </label>
-            <label className="flex items-center cursor-pointer">
+            <label className="flex items-center cursor-pointer group">
               <input
                 type="radio"
                 value="F"
                 {...register('gender', { required: true })}
-                className="mr-2 h-4 w-4 text-primary-600 focus:ring-primary-500"
+                className="mr-2.5 h-4 w-4 text-primary-600 focus:ring-primary-500"
               />
-              <span>Kobieta</span>
+              <span className="text-slate-900 group-hover:text-primary-600 transition-colors duration-200">
+                Kobieta
+              </span>
             </label>
           </div>
         </div>
@@ -109,7 +111,7 @@ export function EditResultModal({ result, isOpen, onClose }: EditResultModalProp
           error={errors.resultValue?.message}
         />
 
-        <div className="flex gap-3 pt-4">
+        <div className="flex gap-4 pt-6">
           <Button type="button" variant="secondary" onClick={onClose} className="flex-1">
             Anuluj
           </Button>
