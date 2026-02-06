@@ -8,7 +8,12 @@
     "start": "node dist/index.js",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:push": "drizzle-kit push"
+    "db:push": "drizzle-kit push",
+    "db:create": "ts-node src/db/create-database.ts",
+    "db:run-migrations": "ts-node src/db/migrate.ts",
+    "db:setup": "npm run db:create && npm run db:run-migrations",
+    "db:verify": "ts-node src/db/verify-schema.ts",
+    "db:test": "ts-node src/db/test-database.ts"
   },
   "keywords": [],
   "author": "",
@@ -27,6 +32,7 @@
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/node": "^25.2.1",
+    "@types/pg": "^8.16.0",
     "@types/uuid": "^10.0.0",
     "drizzle-kit": "^0.31.8",
     "nodemon": "^3.1.11",
