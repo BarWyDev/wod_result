@@ -36,9 +36,17 @@ Potrzeby użytkowników:
 
 FR-001: System umożliwia tworzenie nowego workoutu z polem tekstowym na opis treningu.
 
-FR-002: Przy tworzeniu workoutu użytkownik wybiera kierunek sortowania wyników:
-- "Wyższy wynik wygrywa" (np. dla liczby powtórzeń)
-- "Niższy wynik wygrywa" (np. dla czasu wykonania)
+FR-002: Przy tworzeniu workoutu użytkownik wybiera typ workoutu z predefiniowanej listy:
+- **For Time** (⏱️) - ukończ pracę jak najszybciej (czas, sortowanie rosnąco)
+- **AMRAP** (🔄) - jak najwięcej rund/powtórzeń w limicie czasu (rundy, sortowanie malejąco)
+- **EMOM** (⏰) - praca na początku każdej minuty (rundy, sortowanie malejąco)
+- **Tabata** (💪) - 20s pracy, 10s odpoczynku przez 8 rund (powtórzenia, sortowanie malejąco)
+- **Chipper** (📋) - ukończ listę ćwiczeń w sekwencji (czas, sortowanie rosnąco)
+- **Ladder** (🪜) - powtórzenia rosną/maleją w każdej rundzie (rundy, sortowanie malejąco)
+- **Load/1RM** (🏋️) - maksymalne obciążenie (ciężar, sortowanie malejąco)
+- **Custom** (⚙️) - dowolny inny format (ręczny wybór sortowania)
+
+Kierunek sortowania jest automatycznie określany na podstawie typu workoutu.
 
 FR-003: Każdy workout jest dostępny publicznie na liście workoutów i posiada unikalny URL.
 
