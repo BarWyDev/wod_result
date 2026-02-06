@@ -8,13 +8,13 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'icon-192.png', 'icon-512.png'],
+      includeAssets: ['favicon.ico', 'favicon.svg', 'apple-touch-icon.png', 'icon-192.png', 'icon-512.png'],
       manifest: {
         name: 'Wod Result',
         short_name: 'Wod Result',
         description: 'Porównuj wyniki workoutów z innymi atletami',
-        theme_color: '#4F46E5',
-        background_color: '#FFFFFF',
+        theme_color: '#c56644',
+        background_color: '#fdfcfb',
         display: 'standalone',
         start_url: '/',
         icons: [
