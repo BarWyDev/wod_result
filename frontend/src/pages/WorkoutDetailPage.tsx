@@ -11,6 +11,7 @@ import { AddResultForm } from '../components/result/AddResultForm';
 import { EditResultModal } from '../components/result/EditResultModal';
 import { Button } from '../components/ui/Button';
 import { ShareIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { getWorkoutTypeLabel } from '../constants/workoutTypes';
 
 export default function WorkoutDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -108,19 +109,23 @@ export default function WorkoutDetailPage() {
 
   if (workoutLoading) {
     return (
-      <div className="text-center py-12">
+      <div className="text-center py-16">
         <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary-600 border-r-transparent"></div>
-        <p className="mt-4 text-gray-600">Ładowanie workoutu...</p>
+        <p className="mt-6 text-slate-700">Ładowanie workoutu...</p>
       </div>
     );
   }
 
   if (workoutError || !workout) {
     return (
-      <div className="text-center py-12">
-        <div className="text-6xl mb-4">😕</div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Workout nie został znaleziony</h2>
-        <p className="text-gray-600 mb-6">Ten workout nie istnieje lub został usunięty.</p>
+      <div className="text-center py-20">
+        <div className="text-7xl mb-6">😕</div>
+        <h2 className="text-3xl font-semibold text-slate-900 mb-3">
+          Workout nie został znaleziony
+        </h2>
+        <p className="text-slate-700 text-lg mb-8">
+          Ten workout nie istnieje lub został usunięty.
+        </p>
         <Button onClick={() => navigate('/')}>Wróć do strony głównej</Button>
       </div>
     );
@@ -129,28 +134,39 @@ export default function WorkoutDetailPage() {
   return (
     <div>
       {/* Header */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-        <div className="flex items-start justify-between mb-4">
+      <div className="bg-white rounded border border-slate-200 p-8 mb-8">
+        <div className="flex items-start justify-between mb-6">
           <div className="flex-1">
-            <p className="text-sm text-gray-500 mb-1">{formatDate(workout.workoutDate)}</p>
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">{workout.description}</h1>
-            <div className="flex items-center gap-4 text-sm text-gray-600">
+            <div className="flex items-center gap-3 mb-2">
+              <p className="text-sm text-slate-700 font-medium">
+                {formatDate(workout.workoutDate)}
+              </p>
+              <span className="text-sm bg-primary-100 text-primary-800 px-3 py-1 rounded-full font-medium">
+                {getWorkoutTypeLabel(workout.workoutType)}
+              </span>
+            </div>
+            <h1 className="text-3xl font-semibold text-slate-900 mb-3 leading-tight">
+              {workout.description}
+            </h1>
+            <div className="flex items-center gap-5 text-sm text-slate-700">
               <span>
                 Sortowanie:{' '}
-                <span className="font-medium">
+                <span className="font-medium text-slate-900">
                   {workout.sortDirection === 'asc' ? 'Od najniższej' : 'Od najwyższej'}
                 </span>
               </span>
               {isOwner && (
-                <span className="text-primary-600 font-medium">✓ Twój workout</span>
+                <span className="text-primary-600 font-medium bg-primary-50 px-2 py-1 rounded">
+                  ✓ Twój workout
+                </span>
               )}
             </div>
           </div>
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex gap-3">
           <Button variant="secondary" onClick={handleShare} size="sm">
-            <ShareIcon className="h-4 w-4 mr-1.5" />
+            <ShareIcon className="h-4 w-4 mr-2" />
             Udostępnij
           </Button>
           {isOwner && (
@@ -160,34 +176,34 @@ export default function WorkoutDetailPage() {
               size="sm"
               loading={deleteWorkout.isPending}
             >
-              <TrashIcon className="h-4 w-4 mr-1.5" />
+              <TrashIcon className="h-4 w-4 mr-2" />
               Usuń workout
             </Button>
           )}
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Results List */}
         <div className="lg:col-span-2">
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-            <div className="p-4 border-b border-gray-200 flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-gray-900">
+          <div className="bg-white rounded border border-slate-200">
+            <div className="p-6 border-b border-slate-200 flex items-center justify-between">
+              <h2 className="text-xl font-semibold text-slate-900">
                 Ranking ({filteredResults.length})
               </h2>
               <GenderFilter value={genderFilter} onChange={setGenderFilter} />
             </div>
 
             {resultsLoading && (
-              <div className="p-8 text-center">
+              <div className="p-12 text-center">
                 <div className="inline-block h-6 w-6 animate-spin rounded-full border-4 border-solid border-primary-600 border-r-transparent"></div>
               </div>
             )}
 
             {!resultsLoading && filteredResults.length === 0 && (
-              <div className="p-8 text-center">
-                <div className="text-4xl mb-2">🏁</div>
-                <p className="text-gray-600">
+              <div className="p-12 text-center">
+                <div className="text-5xl mb-3">🏁</div>
+                <p className="text-slate-700 text-lg">
                   {genderFilter === 'all'
                     ? 'Brak wyników. Bądź pierwszy!'
                     : 'Brak wyników dla wybranej płci'}

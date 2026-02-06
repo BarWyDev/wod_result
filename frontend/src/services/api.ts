@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { Workout, Result } from '../types';
+import type { Workout, Result, WorkoutType } from '../types';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3001/api',
@@ -24,7 +24,8 @@ export const workoutsApi = {
   create: async (workout: {
     description: string;
     workoutDate?: string;
-    sortDirection: 'asc' | 'desc';
+    sortDirection?: 'asc' | 'desc';
+    workoutType?: WorkoutType;
   }) => {
     const { data } = await api.post<{ workout: Workout; ownerToken: string }>('/workouts', workout);
     return data;

@@ -1,15 +1,27 @@
 import { Router } from 'express';
 import * as workoutService from '../services/workoutService';
 import { workoutLimiter } from '../middleware/rateLimiter';
+import { ALLOWED_WORKOUT_TYPES } from '../constants/workoutTypes';
 
 const router = Router();
 
 // POST /api/workouts - Utworzenie workoutu
 router.post('/', workoutLimiter, async (req, res, next) => {
   try {
-    const { description, workoutDate, sortDirection } = req.body;
+    const { description, workoutDate, sortDirection, workoutType } = req.body;
 
-    if (!description || !sortDirection) {
+    if (!description) {
+      return res.status(400).json({ error: 'Brak wymaganych pól' });
+    }
+
+    // Validate workoutType if provided
+    if (workoutType && !ALLOWED_WORKOUT_TYPES.includes(workoutType)) {
+      return res.status(400).json({ error: 'Nieprawidłowy typ workoutu' });
+    }
+
+    // If workoutType is provided, sortDirection is auto-determined
+    // If no workoutType, sortDirection is required (backward compatibility)
+    if (!workoutType && !sortDirection) {
       return res.status(400).json({ error: 'Brak wymaganych pól' });
     }
 
@@ -17,6 +29,7 @@ router.post('/', workoutLimiter, async (req, res, next) => {
       description,
       workoutDate,
       sortDirection,
+      workoutType: workoutType || null,
     });
 
     res.status(201).json({ workout, ownerToken });

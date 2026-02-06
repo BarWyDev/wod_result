@@ -7,6 +7,8 @@ export const workouts = pgTable('workouts', {
   description: text('description').notNull(),
   workoutDate: date('workout_date').notNull().defaultNow(),
   sortDirection: varchar('sort_direction', { length: 4 }).notNull().default('desc'),
+  workoutType: varchar('workout_type', { length: 20 }),
+  resultUnit: varchar('result_unit', { length: 20 }),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });

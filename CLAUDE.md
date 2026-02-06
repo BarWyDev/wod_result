@@ -74,6 +74,8 @@ Located in `backend/src/db/schema.ts`:
 - `description` (text) - workout description
 - `workoutDate` (date) - when the workout occurred
 - `sortDirection` ('asc' | 'desc') - how results should be sorted
+- `workoutType` (varchar, nullable) - type of workout (for_time, amrap, emom, tabata, chipper, ladder, load, custom)
+- `resultUnit` (varchar, nullable) - unit for results (time, rounds, reps, weight, custom)
 - `createdAt`, `updatedAt` (timestamps)
 
 **results** table:
@@ -85,6 +87,26 @@ Located in `backend/src/db/schema.ts`:
 - `resultValue` (text) - raw result value (flexible format)
 - `resultNumeric` (numeric, nullable) - parsed numeric value for sorting
 - `createdAt`, `updatedAt` (timestamps)
+
+### Workout Types
+
+Located in `backend/src/constants/workoutTypes.ts` and `frontend/src/constants/workoutTypes.ts`:
+
+The application supports 8 CrossFit workout types:
+1. **For Time** - Complete prescribed work as fast as possible (time-based, ascending sort)
+2. **AMRAP** - As Many Rounds/Reps As Possible (rounds, descending sort)
+3. **EMOM** - Every Minute On the Minute (rounds, descending sort)
+4. **Tabata** - 20s work, 10s rest for 8 rounds (reps, descending sort)
+5. **Chipper** - Complete list of exercises in sequence (time-based, ascending sort)
+6. **Ladder** - Reps increase/decrease each round (rounds, descending sort)
+7. **Load/1RM** - Maximum weight lifted (weight, descending sort)
+8. **Custom** - Any other workout format (manual sort direction)
+
+**Key Features:**
+- `workoutType` field is nullable for backward compatibility (NULL = Custom)
+- Sort direction is auto-determined from workout type
+- Each type has specific result placeholders and hints
+- Type-specific UI badges displayed throughout the app
 
 ### Result Parsing Logic
 
