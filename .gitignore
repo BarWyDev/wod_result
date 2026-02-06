@@ -5,3 +5,12 @@ dist/
 *.log
 .DS_Store
 .claude/
+
+# Compiled TypeScript config files
+backend/drizzle.config.js
+backend/drizzle.config.d.ts
+backend/drizzle.config.js.map
+backend/drizzle.config.d.ts.map
+
+# Test logs
+backend-test.log
