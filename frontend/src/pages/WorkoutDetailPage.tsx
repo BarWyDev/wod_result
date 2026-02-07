@@ -9,6 +9,7 @@ import { GenderFilter } from '../components/result/GenderFilter';
 import { ResultRow } from '../components/result/ResultRow';
 import { AddResultForm } from '../components/result/AddResultForm';
 import { EditResultModal } from '../components/result/EditResultModal';
+import { ConfirmModal } from '../components/ui/ConfirmModal';
 import { Button } from '../components/ui/Button';
 import { ShareIcon, TrashIcon, ArrowLeftIcon } from '@heroicons/react/24/outline';
 import { getWorkoutTypeLabel } from '../constants/workoutTypes';
@@ -25,6 +26,8 @@ export default function WorkoutDetailPage() {
   const [genderFilter, setGenderFilter] = useState<GenderFilterType>('all');
   const [editingResult, setEditingResult] = useState<Result | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [deleteWorkoutModalOpen, setDeleteWorkoutModalOpen] = useState(false);
+  const [deleteResultTarget, setDeleteResultTarget] = useState<Result | null>(null);
 
   const isOwner = id ? isWorkoutOwner(id) : false;
 
@@ -44,14 +47,12 @@ export default function WorkoutDetailPage() {
     }
   };
 
-  const handleDeleteWorkout = async () => {
+  const handleDeleteWorkout = () => {
+    setDeleteWorkoutModalOpen(true);
+  };
+
+  const confirmDeleteWorkout = async () => {
     if (!id) return;
-
-    const confirmed = window.confirm(
-      'Czy na pewno chcesz usunąć ten workout? Wszystkie wyniki zostaną również usunięte. Ta operacja jest nieodwracalna.'
-    );
-
-    if (!confirmed) return;
 
     const ownerToken = getWorkoutOwnerToken(id);
     if (!ownerToken) {
@@ -74,13 +75,14 @@ export default function WorkoutDetailPage() {
     setIsEditModalOpen(true);
   };
 
-  const handleDeleteResult = async (result: Result) => {
-    if (!id) return;
+  const handleDeleteResult = (result: Result) => {
+    setDeleteResultTarget(result);
+  };
 
-    const confirmed = window.confirm('Czy na pewno chcesz usunąć ten wynik?');
-    if (!confirmed) return;
+  const confirmDeleteResult = async () => {
+    if (!id || !deleteResultTarget) return;
 
-    const resultToken = getResultToken(result.id);
+    const resultToken = getResultToken(deleteResultTarget.id);
     if (!resultToken) {
       toast.error('Nie masz uprawnień do usunięcia tego wyniku');
       return;
@@ -88,12 +90,13 @@ export default function WorkoutDetailPage() {
 
     try {
       await deleteResult.mutateAsync({
-        id: result.id,
+        id: deleteResultTarget.id,
         resultToken,
         workoutId: id,
       });
-      removeResult(result.id);
+      removeResult(deleteResultTarget.id);
       toast.success('Wynik został usunięty');
+      setDeleteResultTarget(null);
     } catch (error: any) {
       toast.error(error.response?.data?.error || 'Wystąpił błąd podczas usuwania wyniku');
     }
@@ -260,6 +263,30 @@ export default function WorkoutDetailPage() {
           setIsEditModalOpen(false);
           setEditingResult(null);
         }}
+      />
+
+      {/* Delete Workout Confirmation Modal */}
+      <ConfirmModal
+        isOpen={deleteWorkoutModalOpen}
+        onClose={() => setDeleteWorkoutModalOpen(false)}
+        onConfirm={confirmDeleteWorkout}
+        title="Usunąć workout?"
+        message="Wszystkie wyniki zostaną również usunięte. Ta operacja jest nieodwracalna."
+        confirmText="Usuń"
+        cancelText="Anuluj"
+        variant="danger"
+      />
+
+      {/* Delete Result Confirmation Modal */}
+      <ConfirmModal
+        isOpen={!!deleteResultTarget}
+        onClose={() => setDeleteResultTarget(null)}
+        onConfirm={confirmDeleteResult}
+        title="Usunąć wynik?"
+        message="Ta operacja jest nieodwracalna."
+        confirmText="Usuń"
+        cancelText="Anuluj"
+        variant="danger"
       />
     </div>
   );
