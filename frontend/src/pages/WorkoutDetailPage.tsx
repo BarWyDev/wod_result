@@ -151,7 +151,7 @@ export default function WorkoutDetailPage() {
       </div>
 
       {/* Header */}
-      <div className="bg-white rounded border border-slate-200 p-8 mb-8">
+      <div className="bg-white rounded border border-slate-200 p-4 sm:p-8 mb-4 sm:mb-8">
         <div className="flex items-start justify-between mb-6">
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-2">
@@ -162,7 +162,7 @@ export default function WorkoutDetailPage() {
                 {getWorkoutTypeLabel(workout.workoutType)}
               </span>
             </div>
-            <h1 className="text-3xl font-semibold text-slate-900 mb-3 leading-tight">
+            <h1 className="text-2xl sm:text-3xl font-semibold text-slate-900 mb-3 leading-tight">
               {workout.description}
             </h1>
             <div className="flex items-center gap-5 text-sm text-slate-700">
@@ -205,12 +205,12 @@ export default function WorkoutDetailPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8">
         {/* Results List */}
         <div className="lg:col-span-2">
           <div className="bg-white rounded border border-slate-200">
-            <div className="p-6 border-b border-slate-200 flex items-center justify-between">
-              <h2 className="text-xl font-semibold text-slate-900">
+            <div className="p-4 sm:p-6 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <h2 className="text-xl font-semibold text-slate-900 whitespace-nowrap">
                 Ranking ({filteredResults.length})
               </h2>
               <GenderFilter value={genderFilter} onChange={setGenderFilter} />

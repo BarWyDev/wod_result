@@ -3,6 +3,8 @@ import * as workoutService from '../services/workoutService';
 import { workoutLimiter } from '../middleware/rateLimiter';
 import { ALLOWED_WORKOUT_TYPES } from '../constants/workoutTypes';
 
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 const router = Router();
 
 // POST /api/workouts - Utworzenie workoutu
@@ -12,6 +14,10 @@ router.post('/', workoutLimiter, async (req, res, next) => {
 
     if (!description) {
       return res.status(400).json({ error: 'Brak wymaganych pól' });
+    }
+
+    if (typeof description !== 'string' || description.length > 5000) {
+      return res.status(400).json({ error: 'Opis musi mieć maksymalnie 5000 znaków' });
     }
 
     // Validate workoutType if provided
@@ -52,6 +58,10 @@ router.get('/', async (req, res, next) => {
 // GET /api/workouts/:id - Pojedynczy workout
 router.get('/:id', async (req, res, next) => {
   try {
+    if (!UUID_REGEX.test(req.params.id)) {
+      return res.status(400).json({ error: 'Nieprawidłowy format ID' });
+    }
+
     const workout = await workoutService.getWorkoutById(req.params.id);
 
     if (!workout) {
@@ -67,10 +77,14 @@ router.get('/:id', async (req, res, next) => {
 // DELETE /api/workouts/:id - Usunięcie workoutu
 router.delete('/:id', async (req, res, next) => {
   try {
+    if (!UUID_REGEX.test(req.params.id)) {
+      return res.status(400).json({ error: 'Nieprawidłowy format ID' });
+    }
+
     const { ownerToken } = req.body;
 
-    if (!ownerToken) {
-      return res.status(400).json({ error: 'Brak tokenu autoryzacji' });
+    if (!ownerToken || !UUID_REGEX.test(ownerToken)) {
+      return res.status(400).json({ error: 'Brak lub nieprawidłowy token autoryzacji' });
     }
 
     await workoutService.deleteWorkout(req.params.id, ownerToken);

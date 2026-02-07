@@ -9,7 +9,7 @@ export default function Layout({ children }: LayoutProps) {
   return (
     <div className="min-h-screen bg-cream-50 flex flex-col">
       <header className="bg-cream-100 border-b border-slate-200">
-        <div className="max-w-5xl mx-auto px-6 py-6 flex items-center justify-between">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 flex items-center justify-between">
           <Link
             to="/"
             className="text-2xl font-semibold text-slate-900 hover:text-primary-600 transition-colors duration-200"
@@ -25,12 +25,12 @@ export default function Layout({ children }: LayoutProps) {
         </div>
       </header>
 
-      <main className="max-w-5xl mx-auto px-6 py-12 flex-1">
+      <main className="max-w-5xl w-full mx-auto px-4 sm:px-6 py-12 flex-1">
         {children}
       </main>
 
       <footer className="bg-cream-100 border-t border-slate-200">
-        <div className="max-w-5xl mx-auto px-6 py-8 text-center text-slate-700 text-sm">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 text-center text-slate-700 text-sm">
           Stworzone przez barwy z <span className="heartbeat">❤️</span> do Crossfit
         </div>
       </footer>

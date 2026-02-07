@@ -20,7 +20,7 @@ export function GenderFilter({ value, onChange }: GenderFilterProps) {
           key={option.value}
           onClick={() => onChange(option.value)}
           className={clsx(
-            'px-4 py-1.5 text-sm font-medium rounded transition-all duration-200',
+            'px-2.5 sm:px-4 py-1.5 text-xs sm:text-sm font-medium rounded transition-all duration-200',
             value === option.value
               ? 'bg-white text-slate-900 shadow-sm'
               : 'text-slate-700 hover:text-slate-900'
