@@ -3,10 +3,20 @@ import type { WorkoutOwnership, ResultOwnership } from '../types';
 const WORKOUTS_KEY = 'myWorkouts';
 const RESULTS_KEY = 'myResults';
 
+function safeParse<T>(key: string): T[] {
+  const data = localStorage.getItem(key);
+  if (!data) return [];
+  try {
+    return JSON.parse(data);
+  } catch {
+    localStorage.removeItem(key);
+    return [];
+  }
+}
+
 // Workouts
 export function getMyWorkouts(): WorkoutOwnership[] {
-  const data = localStorage.getItem(WORKOUTS_KEY);
-  return data ? JSON.parse(data) : [];
+  return safeParse<WorkoutOwnership>(WORKOUTS_KEY);
 }
 
 export function addMyWorkout(workoutId: string, ownerToken: string | null): void {
@@ -47,8 +57,7 @@ export function removeMyWorkout(workoutId: string): void {
 
 // Results
 export function getMyResults(): ResultOwnership[] {
-  const data = localStorage.getItem(RESULTS_KEY);
-  return data ? JSON.parse(data) : [];
+  return safeParse<ResultOwnership>(RESULTS_KEY);
 }
 
 export function addMyResult(resultId: string, resultToken: string): void {
