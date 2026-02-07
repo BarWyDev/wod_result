@@ -6,6 +6,7 @@ import { useCreateWorkout } from '../hooks/useWorkouts';
 import { useAuth } from '../context/AuthContext';
 import { Input } from '../components/ui/Input';
 import { Button } from '../components/ui/Button';
+import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import type { WorkoutType } from '../types';
 import { WORKOUT_TYPE_OPTIONS, getSortDirectionLabel } from '../constants/workoutTypes';
 
@@ -50,6 +51,20 @@ export default function CreateWorkoutPage() {
 
   return (
     <div className="max-w-2xl mx-auto">
+      {/* Back Button */}
+      <div className="mb-4">
+        <Button
+          variant="primary"
+          onClick={() => navigate('/')}
+          size="sm"
+        >
+          <span className="inline-flex items-center">
+            <ArrowLeftIcon className="h-3.5 w-3.5 mr-1.5" />
+            Wróć do workoutów
+          </span>
+        </Button>
+      </div>
+
       <div className="mb-10">
         <h1 className="text-4xl font-semibold text-slate-900 tracking-tight">Nowy workout</h1>
         <p className="text-slate-700 mt-3 text-lg">

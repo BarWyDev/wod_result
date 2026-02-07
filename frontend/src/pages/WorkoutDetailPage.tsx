@@ -10,7 +10,7 @@ import { ResultRow } from '../components/result/ResultRow';
 import { AddResultForm } from '../components/result/AddResultForm';
 import { EditResultModal } from '../components/result/EditResultModal';
 import { Button } from '../components/ui/Button';
-import { ShareIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { ShareIcon, TrashIcon, ArrowLeftIcon } from '@heroicons/react/24/outline';
 import { getWorkoutTypeLabel } from '../constants/workoutTypes';
 
 export default function WorkoutDetailPage() {
@@ -133,6 +133,20 @@ export default function WorkoutDetailPage() {
 
   return (
     <div>
+      {/* Back Button */}
+      <div className="mb-4">
+        <Button
+          variant="primary"
+          onClick={() => navigate('/')}
+          size="sm"
+        >
+          <span className="inline-flex items-center">
+            <ArrowLeftIcon className="h-3.5 w-3.5 mr-1.5" />
+            Wróć do workoutów
+          </span>
+        </Button>
+      </div>
+
       {/* Header */}
       <div className="bg-white rounded border border-slate-200 p-8 mb-8">
         <div className="flex items-start justify-between mb-6">
@@ -165,10 +179,13 @@ export default function WorkoutDetailPage() {
         </div>
 
         <div className="flex gap-3">
-          <Button variant="secondary" onClick={handleShare} size="sm">
+          <button
+            onClick={handleShare}
+            className="inline-flex items-center px-4 py-2 text-sm font-medium rounded bg-slate-100 text-slate-900 border border-slate-200 hover:bg-slate-200 transition-all duration-200"
+          >
             <ShareIcon className="h-4 w-4 mr-2" />
             Udostępnij
-          </Button>
+          </button>
           {isOwner && (
             <Button
               variant="danger"
@@ -176,8 +193,10 @@ export default function WorkoutDetailPage() {
               size="sm"
               loading={deleteWorkout.isPending}
             >
-              <TrashIcon className="h-4 w-4 mr-2" />
-              Usuń workout
+              <span className="inline-flex items-center">
+                <TrashIcon className="h-4 w-4 mr-2" />
+                Usuń workout
+              </span>
             </Button>
           )}
         </div>

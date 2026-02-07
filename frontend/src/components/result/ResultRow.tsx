@@ -27,7 +27,10 @@ export function ResultRow({ result, position, onEdit, onDelete }: ResultRowProps
           <span className="font-medium text-slate-900 text-base">
             {result.athleteName}
           </span>
-          <span className="text-base text-slate-500">
+          <span className={clsx(
+            "text-xl font-extrabold",
+            result.gender === 'M' ? 'text-blue-600' : 'text-pink-600'
+          )}>
             {result.gender === 'M' ? '♂' : '♀'}
           </span>
         </div>
