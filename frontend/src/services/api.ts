@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { Workout, Result, WorkoutType } from '../types';
+import type { Workout, Result, WorkoutType, RoundDetails } from '../types';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3001/api',
@@ -48,6 +48,7 @@ export const resultsApi = {
     athleteName: string;
     gender: 'M' | 'F';
     resultValue: string;
+    roundDetails?: RoundDetails | null;
   }) => {
     const { data } = await api.post<{ result: Result; resultToken: string }>('/results', result);
     return data;
@@ -60,6 +61,7 @@ export const resultsApi = {
       athleteName?: string;
       gender?: 'M' | 'F';
       resultValue?: string;
+      roundDetails?: RoundDetails | null;
     }
   ) => {
     const response = await api.put<{ result: Result }>(`/results/${id}`, {

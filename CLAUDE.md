@@ -86,6 +86,7 @@ Located in `backend/src/db/schema.ts`:
 - `gender` ('M' | 'F') - athlete's gender
 - `resultValue` (text) - raw result value (flexible format)
 - `resultNumeric` (numeric, nullable) - parsed numeric value for sorting
+- `roundDetails` (jsonb, nullable) - per-round scores for EMOM/Tabata workouts (format: `{"rounds": [10, 12, 11, ...]}`)
 - `createdAt`, `updatedAt` (timestamps)
 
 ### Workout Types
@@ -116,6 +117,33 @@ The `parseResultNumeric()` function converts various result formats to numeric v
 1. **Time formats:** `mm:ss` or `hh:mm:ss` → converted to total seconds
 2. **Numeric formats:** Extracts first number from string (e.g., "150 reps" → 150)
 3. **Non-numeric:** Returns `null` (these results appear at the end of rankings)
+
+The `calculateRoundSum()` function calculates the sum of round-by-round scores:
+- Takes `roundDetails` object: `{ rounds: number[] }`
+- Validates all rounds are non-negative numbers
+- Returns sum or `null` if invalid
+- Used for EMOM and Tabata workouts
+
+### Round-by-Round Tracking
+
+**Available for:** EMOM and Tabata workouts only
+
+**Data Structure:**
+- Stored in `results.roundDetails` as JSONB: `{"rounds": [10, 12, 11, 13, ...]}`
+- `resultValue` automatically calculated as sum of rounds
+- `resultNumeric` derived from sum for sorting
+
+**User Interface:**
+- Two input modes: "Wynik końcowy" (simple total) or "Rundy" (per-round entry)
+- AddResultForm and EditResultModal both support round tracking
+- ResultRow displays expandable round breakdown (▶/▼ button)
+- Round grid: 4 columns on mobile, 6 on tablet, 8 on desktop
+
+**Validation:**
+- Maximum 100 rounds per result
+- All rounds must be non-negative numbers
+- Empty rounds array rejected
+- Backward compatible: results without rounds display normally
 
 ### Frontend State Management
 

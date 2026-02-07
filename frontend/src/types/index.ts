@@ -11,6 +11,10 @@ export interface Workout {
   resultCount?: number;
 }
 
+export interface RoundDetails {
+  rounds: number[];
+}
+
 export interface Result {
   id: string;
   workoutId: string;
@@ -18,6 +22,7 @@ export interface Result {
   gender: 'M' | 'F';
   resultValue: string;
   resultNumeric: string | null;
+  roundDetails?: RoundDetails | null;
   createdAt: string;
 }
 

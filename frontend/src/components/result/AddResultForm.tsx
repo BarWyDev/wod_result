@@ -1,5 +1,7 @@
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
+import clsx from 'clsx';
 import { useCreateResult } from '../../hooks/useResults';
 import { useWorkout } from '../../hooks/useWorkouts';
 import { useAuth } from '../../context/AuthContext';
@@ -24,6 +26,13 @@ export function AddResultForm({ workoutId }: AddResultFormProps) {
 
   const workoutTypeConfig = getWorkoutTypeConfig(workout?.workoutType);
 
+  // Tryb wprowadzania: prosty vs. rundy
+  const [inputMode, setInputMode] = useState<'simple' | 'rounds'>('simple');
+  const [rounds, setRounds] = useState<number[]>([]);
+
+  // Sprawdź czy workout wspiera śledzenie rund
+  const isRoundBasedWorkout = workout?.workoutType === 'emom' || workout?.workoutType === 'tabata';
+
   const {
     register,
     handleSubmit,
@@ -35,15 +44,47 @@ export function AddResultForm({ workoutId }: AddResultFormProps) {
     },
   });
 
+  // Obsługa rund
+  const addRound = () => {
+    setRounds([...rounds, 0]);
+  };
+
+  const updateRound = (index: number, value: number) => {
+    const newRounds = [...rounds];
+    newRounds[index] = value;
+    setRounds(newRounds);
+  };
+
+  const removeRound = (index: number) => {
+    setRounds(rounds.filter((_, i) => i !== index));
+  };
+
+  // Oblicz sumę rund
+  const total = rounds.reduce((sum, r) => sum + r, 0);
+
   const onSubmit = async (data: ResultFormData) => {
     try {
-      const response = await createResult.mutateAsync({
+      const payload: any = {
         workoutId,
-        ...data,
-      });
+        athleteName: data.athleteName,
+        gender: data.gender,
+      };
+
+      if (inputMode === 'rounds' && rounds.length > 0) {
+        // Tryb rund - wyślij szczegóły rund
+        payload.resultValue = total.toString();
+        payload.roundDetails = { rounds };
+      } else {
+        // Tryb prosty - wyślij wartość wyniku
+        payload.resultValue = data.resultValue;
+      }
+
+      const response = await createResult.mutateAsync(payload);
       addResult(workoutId, response.result.id, response.resultToken);
       toast.success('Wynik został dodany!');
       reset();
+      setRounds([]);
+      setInputMode('simple');
     } catch (error: any) {
       toast.error(error.response?.data?.error || 'Wystąpił błąd podczas dodawania wyniku');
     }
@@ -92,19 +133,86 @@ export function AddResultForm({ workoutId }: AddResultFormProps) {
           </div>
         </div>
 
-        <div>
-          <Input
-            label="Wynik *"
-            {...register('resultValue', {
-              required: 'Wynik jest wymagany',
-            })}
-            error={errors.resultValue?.message}
-            placeholder={workoutTypeConfig.placeholder}
-          />
-          <p className="mt-2 text-sm text-slate-600">
-            {workoutTypeConfig.hint}
-          </p>
-        </div>
+        {isRoundBasedWorkout && (
+          <div className="mb-4">
+            <div className="flex gap-2 mb-2">
+              <button
+                type="button"
+                onClick={() => setInputMode('simple')}
+                className={clsx(
+                  'px-3 py-1 rounded text-sm font-medium transition-colors duration-200',
+                  inputMode === 'simple'
+                    ? 'bg-primary-600 text-white'
+                    : 'bg-slate-200 text-slate-700 hover:bg-slate-300'
+                )}
+              >
+                Wynik końcowy
+              </button>
+              <button
+                type="button"
+                onClick={() => setInputMode('rounds')}
+                className={clsx(
+                  'px-3 py-1 rounded text-sm font-medium transition-colors duration-200',
+                  inputMode === 'rounds'
+                    ? 'bg-primary-600 text-white'
+                    : 'bg-slate-200 text-slate-700 hover:bg-slate-300'
+                )}
+              >
+                Rundy
+              </button>
+            </div>
+          </div>
+        )}
+
+        {inputMode === 'simple' ? (
+          <div>
+            <Input
+              label="Wynik *"
+              {...register('resultValue', {
+                required: inputMode === 'simple' ? 'Wynik jest wymagany' : false,
+              })}
+              error={errors.resultValue?.message}
+              placeholder={workoutTypeConfig.placeholder}
+            />
+            <p className="mt-2 text-sm text-slate-600">
+              {workoutTypeConfig.hint}
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-slate-900">
+              Wyniki poszczególnych rund
+            </label>
+            {rounds.map((round, idx) => (
+              <div key={idx} className="flex gap-2 items-center">
+                <span className="text-sm text-slate-600 w-16">Runda {idx + 1}:</span>
+                <input
+                  type="number"
+                  value={round}
+                  onChange={(e) => updateRound(idx, parseInt(e.target.value) || 0)}
+                  min={0}
+                  className="flex-1 rounded border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                />
+                <button
+                  type="button"
+                  onClick={() => removeRound(idx)}
+                  className="text-red-600 hover:text-red-700 px-2 font-semibold text-lg transition-colors duration-200"
+                  aria-label="Usuń rundę"
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
+            <Button type="button" onClick={addRound} variant="secondary" size="sm">
+              + Dodaj rundę
+            </Button>
+            {rounds.length > 0 && (
+              <div className="mt-2 p-3 bg-slate-100 rounded">
+                <span className="font-semibold text-slate-900">Suma: {total}</span>
+              </div>
+            )}
+          </div>
+        )}
 
         <Button type="submit" loading={createResult.isPending} className="w-full">
           Dodaj wynik
