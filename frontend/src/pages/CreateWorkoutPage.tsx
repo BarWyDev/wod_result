@@ -115,17 +115,17 @@ export default function CreateWorkoutPage() {
                   key={option.value}
                   type="button"
                   onClick={() => setSelectedType(option.value)}
-                  className={`p-4 border-2 rounded-lg text-left transition-all duration-200 ${
+                  className={`p-3 sm:p-4 border-2 rounded-lg text-left transition-all duration-200 ${
                     selectedType === option.value
                       ? 'border-primary-600 bg-primary-50'
                       : 'border-slate-300 bg-white hover:border-slate-400 hover:bg-slate-50'
                   }`}
                 >
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-2xl">{option.emoji}</span>
-                    <span className="font-semibold text-slate-900">{option.label}</span>
+                  <div className="flex items-start gap-2 mb-1">
+                    <span className="text-xl sm:text-2xl flex-shrink-0">{option.emoji}</span>
+                    <span className="font-semibold text-sm sm:text-base text-slate-900 leading-tight break-words">{option.label}</span>
                   </div>
-                  <div className="text-sm text-slate-700">{option.description}</div>
+                  <div className="text-xs sm:text-sm text-slate-700 leading-tight">{option.description}</div>
                 </button>
               ))}
             </div>
