@@ -22,54 +22,56 @@ export function ResultRow({ result, position, onEdit, onDelete }: ResultRowProps
       {/* Main row */}
       <div
         className={clsx(
-          'flex items-center gap-5 p-5 transition-colors duration-200',
+          'p-3 sm:p-5 transition-colors duration-200',
           isOwner && 'bg-primary-50'
         )}
       >
-        <span className="w-10 text-xl font-semibold text-slate-400">{position}</span>
+        <div className="flex items-center gap-2 sm:gap-5">
+          <span className="w-8 sm:w-10 text-lg sm:text-xl font-semibold text-slate-400 shrink-0">{position}</span>
 
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2.5">
-            <span className="font-medium text-slate-900 text-base">
-              {result.athleteName}
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-1.5 sm:gap-2.5">
+              <span className="font-medium text-slate-900 text-sm sm:text-base truncate">
+                {result.athleteName}
+              </span>
+              <span className={clsx(
+                "text-base sm:text-xl font-extrabold shrink-0",
+                result.gender === 'M' ? 'text-blue-600' : 'text-pink-600'
+              )}>
+                {result.gender === 'M' ? '♂' : '♀'}
+              </span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+            <span className="font-mono text-base sm:text-lg font-medium text-slate-900">
+              {result.resultValue}
             </span>
-            <span className={clsx(
-              "text-xl font-extrabold",
-              result.gender === 'M' ? 'text-blue-600' : 'text-pink-600'
-            )}>
-              {result.gender === 'M' ? '♂' : '♀'}
-            </span>
+
+            {hasRoundDetails && (
+              <button
+                onClick={() => setIsExpanded(!isExpanded)}
+                className="text-slate-400 hover:text-slate-600 transition-colors p-1"
+                aria-label={isExpanded ? 'Zwiń szczegóły rund' : 'Rozwiń szczegóły rund'}
+                aria-expanded={isExpanded}
+              >
+                {isExpanded ? '▼' : '▶'}
+              </button>
+            )}
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <span className="font-mono text-lg font-medium text-slate-900">
-            {result.resultValue}
-          </span>
-
-          {hasRoundDetails && (
-            <button
-              onClick={() => setIsExpanded(!isExpanded)}
-              className="text-slate-400 hover:text-slate-600 transition-colors p-1"
-              aria-label={isExpanded ? 'Zwiń szczegóły rund' : 'Rozwiń szczegóły rund'}
-              aria-expanded={isExpanded}
-            >
-              {isExpanded ? '▼' : '▶'}
-            </button>
-          )}
-        </div>
-
         {isOwner && (
-          <div className="flex gap-3">
+          <div className="flex gap-3 mt-1.5 ml-8 sm:ml-10">
             <button
               onClick={() => onEdit(result)}
-              className="text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors duration-200"
+              className="text-xs sm:text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors duration-200"
             >
               Edytuj
             </button>
             <button
               onClick={() => onDelete(result)}
-              className="text-sm font-medium text-red-600 hover:text-red-700 transition-colors duration-200"
+              className="text-xs sm:text-sm font-medium text-red-600 hover:text-red-700 transition-colors duration-200"
             >
               Usuń
             </button>

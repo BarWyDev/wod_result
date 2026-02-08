@@ -18,7 +18,7 @@ export default function Layout({ children }: LayoutProps) {
           </Link>
           <Link
             to="/workout/create"
-            className="bg-primary-600 text-white px-6 py-2.5 rounded hover:bg-primary-700 transition-all duration-200 ease-out font-medium hover:scale-105"
+            className="bg-primary-600 text-white px-3 py-2 sm:px-6 sm:py-2.5 rounded hover:bg-primary-700 transition-all duration-200 ease-out font-medium hover:scale-105 text-sm sm:text-base whitespace-nowrap"
           >
             + Nowy workout
           </Link>
