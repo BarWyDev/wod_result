@@ -14,16 +14,16 @@ const options: { value: GenderFilterType; label: string }[] = [
 
 export function GenderFilter({ value, onChange }: GenderFilterProps) {
   return (
-    <div className="inline-flex rounded-lg bg-gray-100 p-1">
+    <div className="inline-flex rounded bg-slate-100 p-1 border border-slate-200">
       {options.map((option) => (
         <button
           key={option.value}
           onClick={() => onChange(option.value)}
           className={clsx(
-            'px-4 py-2 text-sm font-medium rounded-md transition-colors',
+            'px-2.5 sm:px-4 py-1.5 text-xs sm:text-sm font-medium rounded transition-all duration-200',
             value === option.value
-              ? 'bg-white text-gray-900 shadow-sm'
-              : 'text-gray-600 hover:text-gray-900'
+              ? 'bg-white text-slate-900 shadow-sm'
+              : 'text-slate-700 hover:text-slate-900'
           )}
         >
           {option.label}

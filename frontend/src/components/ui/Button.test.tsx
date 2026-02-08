@@ -55,7 +55,7 @@ describe('Button', () => {
     render(<Button variant="secondary">Click me</Button>);
     const button = screen.getByText('Click me');
 
-    expect(button).toHaveClass('bg-gray-200');
+    expect(button).toHaveClass('bg-slate-100');
   });
 
   it('should apply danger variant', () => {
@@ -69,21 +69,21 @@ describe('Button', () => {
     render(<Button>Click me</Button>);
     const button = screen.getByText('Click me');
 
-    expect(button).toHaveClass('px-4', 'py-2');
+    expect(button).toHaveClass('px-6', 'py-2.5');
   });
 
   it('should apply small size', () => {
     render(<Button size="sm">Click me</Button>);
     const button = screen.getByText('Click me');
 
-    expect(button).toHaveClass('px-3', 'py-1.5');
+    expect(button).toHaveClass('px-4', 'py-2');
   });
 
   it('should apply large size', () => {
     render(<Button size="lg">Click me</Button>);
     const button = screen.getByText('Click me');
 
-    expect(button).toHaveClass('px-6', 'py-3');
+    expect(button).toHaveClass('px-8', 'py-3');
   });
 
   it('should apply custom className', () => {

@@ -16,20 +16,22 @@ export default function HomePage() {
 
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900 mb-4">Workouty</h1>
+      <div className="mb-10">
+        <h1 className="text-4xl font-semibold text-slate-900 mb-6 tracking-tight">
+          Workouty
+        </h1>
         <DateFilter value={dateFilter} onChange={setDateFilter} />
       </div>
 
       {isLoading && (
-        <div className="text-center py-12">
+        <div className="text-center py-16">
           <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary-600 border-r-transparent"></div>
-          <p className="mt-4 text-gray-600">Ładowanie workoutów...</p>
+          <p className="mt-6 text-slate-700">Ładowanie workoutów...</p>
         </div>
       )}
 
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-800">
+        <div className="bg-red-50 border border-red-300 rounded p-5 text-red-900">
           Wystąpił błąd podczas ładowania workoutów. Spróbuj ponownie później.
         </div>
       )}
@@ -37,11 +39,11 @@ export default function HomePage() {
       {!isLoading && !error && workouts && (
         <>
           {myWorkoutsList.length > 0 && (
-            <section className="mb-8">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">
+            <section className="mb-12">
+              <h2 className="text-2xl font-semibold text-slate-900 mb-6">
                 Moje workouty ({myWorkoutsList.length})
               </h2>
-              <div className="space-y-3">
+              <div className="space-y-4">
                 {myWorkoutsList.map((workout) => (
                   <WorkoutCard
                     key={workout.id}
@@ -55,10 +57,10 @@ export default function HomePage() {
 
           {otherWorkouts.length > 0 && (
             <section>
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">
+              <h2 className="text-2xl font-semibold text-slate-900 mb-6">
                 {myWorkoutsList.length > 0 ? 'Inne workouty' : 'Wszystkie workouty'} ({otherWorkouts.length})
               </h2>
-              <div className="space-y-3">
+              <div className="space-y-4">
                 {otherWorkouts.map((workout) => (
                   <WorkoutCard key={workout.id} workout={workout} />
                 ))}
@@ -67,12 +69,12 @@ export default function HomePage() {
           )}
 
           {workouts.length === 0 && (
-            <div className="text-center py-12">
-              <div className="text-6xl mb-4">🏋️</div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+            <div className="text-center py-20">
+              <div className="text-7xl mb-6">🏋️</div>
+              <h3 className="text-2xl font-semibold text-slate-900 mb-3">
                 Brak workoutów
               </h3>
-              <p className="text-gray-600 mb-6">
+              <p className="text-slate-700 text-lg max-w-md mx-auto mb-8">
                 {dateFilter === 'all'
                   ? 'Nie ma jeszcze żadnych workoutów. Utwórz pierwszy!'
                   : 'Nie znaleziono workoutów w wybranym okresie. Spróbuj zmienić filtr.'}

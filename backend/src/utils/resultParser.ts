@@ -37,3 +37,29 @@ export function parseResultNumeric(value: string): number | null {
   // 3. Wartości nieliczbowe
   return null;
 }
+
+/**
+ * Oblicza sumę wyników z poszczególnych rund
+ * @param roundDetails - Obiekt zawierający tablicę wyników z poszczególnych rund
+ * @returns Suma wszystkich rund lub null jeśli dane są nieprawidłowe
+ */
+export function calculateRoundSum(roundDetails: { rounds: number[] } | null): number | null {
+  if (!roundDetails?.rounds || !Array.isArray(roundDetails.rounds)) {
+    return null;
+  }
+
+  if (roundDetails.rounds.length === 0) {
+    return null;
+  }
+
+  // Walidacja - wszystkie rundy muszą być nieujemnymi liczbami
+  const allValid = roundDetails.rounds.every(r =>
+    typeof r === 'number' && !isNaN(r) && r >= 0 && Number.isFinite(r)
+  );
+
+  if (!allValid) {
+    return null;
+  }
+
+  return roundDetails.rounds.reduce((sum, round) => sum + round, 0);
+}

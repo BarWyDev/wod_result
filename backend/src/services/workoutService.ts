@@ -3,19 +3,33 @@ import { workouts, results, Workout, NewWorkout } from '../db/schema';
 import { eq, gte, desc, sql } from 'drizzle-orm';
 import { randomUUID } from 'crypto';
 import { AppError } from '../middleware/errorHandler';
+import { WorkoutType, getWorkoutTypeConfig } from '../constants/workoutTypes';
 
 export async function createWorkout(data: {
   description: string;
   workoutDate?: string;
-  sortDirection: 'asc' | 'desc';
+  sortDirection?: 'asc' | 'desc';
+  workoutType?: WorkoutType | null;
 }): Promise<{ workout: Workout; ownerToken: string }> {
   const ownerToken = randomUUID();
+
+  // Auto-determine sortDirection and resultUnit from workoutType if provided
+  let sortDirection = data.sortDirection || 'desc';
+  let resultUnit = 'custom';
+
+  if (data.workoutType) {
+    const config = getWorkoutTypeConfig(data.workoutType);
+    sortDirection = config.sortDirection;
+    resultUnit = config.resultUnit;
+  }
 
   const [workout] = await db.insert(workouts).values({
     ownerToken,
     description: data.description,
     workoutDate: data.workoutDate || new Date().toISOString().split('T')[0],
-    sortDirection: data.sortDirection,
+    sortDirection,
+    workoutType: data.workoutType || null,
+    resultUnit,
   }).returning();
 
   if (!workout) {
@@ -48,6 +62,8 @@ export async function getWorkouts(dateFilter?: string): Promise<any[]> {
       description: workouts.description,
       workoutDate: workouts.workoutDate,
       sortDirection: workouts.sortDirection,
+      workoutType: workouts.workoutType,
+      resultUnit: workouts.resultUnit,
       createdAt: workouts.createdAt,
       resultCount: sql<number>`count(${results.id})::int`,
     })

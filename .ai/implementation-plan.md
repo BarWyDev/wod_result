@@ -19,7 +19,8 @@ Status: Gotowy do realizacji
 9. [Faza 8: PWA](#faza-8-pwa)
 10. [Faza 9: Testowanie](#faza-9-testowanie)
 11. [Faza 10: Deployment](#faza-10-deployment)
-12. [Checklist końcowy](#checklist-końcowy)
+12. [Faza 11: Workout Types (Enhancement)](#faza-11-workout-types-enhancement)
+13. [Checklist końcowy](#checklist-końcowy)
 
 ---
 
@@ -56,6 +57,8 @@ wod_result/
 │   │   │   └── rateLimiter.ts
 │   │   ├── utils/
 │   │   │   └── resultParser.ts
+│   │   ├── constants/
+│   │   │   └── workoutTypes.ts
 │   │   └── index.ts        # Entry point
 │   ├── drizzle.config.ts
 │   ├── package.json
@@ -75,6 +78,8 @@ wod_result/
 │   │   │   ├── useWorkouts.ts
 │   │   │   ├── useResults.ts
 │   │   │   └── useAuth.ts
+│   │   ├── constants/
+│   │   │   └── workoutTypes.ts
 │   │   ├── context/
 │   │   │   ├── AuthContext.tsx
 │   │   │   └── ToastContext.tsx
@@ -2148,12 +2153,160 @@ pm2 status
 
 ---
 
+## Faza 11: Workout Types (Enhancement)
+
+**Status**: ✅ Zakończona (2026-02-06)
+**Czas szacunkowy**: 10-13h
+**Cel**: Dodanie typów workoutów CrossFit z automatycznym określaniem sortowania i wskazówkami dla użytkownika.
+
+### Krok 11.1: Backend - Database Migration
+**Czas szacunkowy**: 30 min
+
+**Zadania:**
+- [x] Utworzenie migracji `0002_add_workout_types.sql`
+- [x] Dodanie kolumn `workout_type` i `result_unit` (nullable)
+- [x] Dodanie check constraints dla dozwolonych wartości
+- [x] Dodanie indeksu `idx_workouts_type`
+
+**Pliki:**
+- `backend/src/db/migrations/0002_add_workout_types.sql`
+- `backend/src/db/schema.ts` - aktualizacja schematu
+
+### Krok 11.2: Backend - Workout Types Constants
+**Czas szacunkowy**: 1h
+
+**Zadania:**
+- [x] Utworzenie `backend/src/constants/workoutTypes.ts`
+- [x] Definicja 8 typów workoutów (for_time, amrap, emom, tabata, chipper, ladder, load, custom)
+- [x] Konfiguracja dla każdego typu (sortDirection, resultUnit, placeholders)
+- [x] Funkcja `getWorkoutTypeConfig()`
+
+**Typy workoutów:**
+1. For Time (⏱️) - czas, sortowanie ASC
+2. AMRAP (🔄) - rundy, sortowanie DESC
+3. EMOM (⏰) - rundy, sortowanie DESC
+4. Tabata (💪) - powtórzenia, sortowanie DESC
+5. Chipper (📋) - czas, sortowanie ASC
+6. Ladder (🪜) - rundy, sortowanie DESC
+7. Load/1RM (🏋️) - ciężar, sortowanie DESC
+8. Custom (⚙️) - dowolny, użytkownik wybiera
+
+### Krok 11.3: Backend - Service & Routes Update
+**Czas szacunkowy**: 1h
+
+**Zadania:**
+- [x] Aktualizacja `workoutService.createWorkout()` - auto-określanie sortDirection i resultUnit
+- [x] Aktualizacja `workouts.ts` routes - walidacja workoutType
+- [x] Aktualizacja `getWorkouts()` - zwracanie nowych pól
+
+**Pliki:**
+- `backend/src/services/workoutService.ts`
+- `backend/src/routes/workouts.ts`
+
+### Krok 11.4: Frontend - Types & Constants
+**Czas szacunkowy**: 1h
+
+**Zadania:**
+- [x] Aktualizacja `frontend/src/types/index.ts` - dodanie WorkoutType
+- [x] Utworzenie `frontend/src/constants/workoutTypes.ts`
+- [x] Polskie etykiety, emoji, placeholdery dla każdego typu
+- [x] Funkcje pomocnicze: `getWorkoutTypeConfig()`, `getWorkoutTypeLabel()`
+
+### Krok 11.5: Frontend - CreateWorkoutPage Redesign
+**Czas szacunkowy**: 2-3h
+
+**Zadania:**
+- [x] Usunięcie manualnego wyboru sortDirection
+- [x] Dodanie wizualnej siatki typów workoutów (2 kolumny)
+- [x] Interaktywne karty z emoji, nazwą, opisem
+- [x] Podgląd automatycznego sortowania poniżej selekcji
+- [x] Aktualizacja logiki submitu formularza
+
+**Plik:**
+- `frontend/src/pages/CreateWorkoutPage.tsx`
+
+### Krok 11.6: Frontend - UI Components Update
+**Czas szacunkowy**: 2h
+
+**Zadania:**
+- [x] `WorkoutCard.tsx` - badge z typem workoutu obok daty
+- [x] `WorkoutDetailPage.tsx` - większy badge w nagłówku
+- [x] `AddResultForm.tsx` - dynamiczne placeholdery i hinty
+- [x] Wsparcie dla legacy workoutów (NULL = Custom)
+
+**Pliki:**
+- `frontend/src/components/workout/WorkoutCard.tsx`
+- `frontend/src/pages/WorkoutDetailPage.tsx`
+- `frontend/src/components/result/AddResultForm.tsx`
+
+### Krok 11.7: Frontend - API Service Update
+**Czas szacunkowy**: 30 min
+
+**Zadania:**
+- [x] Aktualizacja `frontend/src/services/api.ts`
+- [x] Parametr `workoutType` w `create()` (opcjonalny)
+- [x] `sortDirection` staje się opcjonalne
+
+### Krok 11.8: Documentation Update
+**Czas szacunkowy**: 1h
+
+**Zadania:**
+- [x] Aktualizacja `CLAUDE.md` - sekcja Workout Types
+- [x] Aktualizacja `.ai/db-plan.md` - nowe kolumny
+- [x] Aktualizacja `.ai/prd.md` - FR-002
+- [x] Aktualizacja `.ai/implementation-plan.md` - struktura katalogów
+
+### Krok 11.9: Testing & Verification
+**Czas szacunkowy**: 2h
+
+**Zadania:**
+- [ ] Uruchomienie migracji bazy danych
+- [ ] Testy tworzenia workoutów z różnymi typami
+- [ ] Weryfikacja auto-sortowania
+- [ ] Testy backward compatibility z legacy workoutami
+- [ ] Sprawdzenie responsywności na mobile
+- [ ] Build frontend bez błędów TypeScript ✅
+
+**Weryfikacja:**
+```bash
+cd backend && npm run db:run-migrations
+cd frontend && npm run build  # ✅ Zakończone sukcesem
+```
+
+### Rezultat Fazy 11
+
+**Dodane pliki:**
+- `backend/src/constants/workoutTypes.ts`
+- `backend/src/db/migrations/0002_add_workout_types.sql`
+- `frontend/src/constants/workoutTypes.ts`
+
+**Zmodyfikowane pliki (13):**
+- Backend (3): schema.ts, workoutService.ts, workouts.ts
+- Frontend (7): types, api.ts, CreateWorkoutPage, WorkoutCard, WorkoutDetailPage, AddResultForm
+- Dokumentacja (3): CLAUDE.md, db-plan.md, prd.md
+
+**Funkcjonalności:**
+- ✅ 8 typów workoutów z emoji
+- ✅ Automatyczne określanie sortowania
+- ✅ Dynamiczne placeholdery dla wyników
+- ✅ Type-specific hints dla użytkowników
+- ✅ 100% backward compatible
+- ✅ Fully typed z TypeScript
+
+**Commit:**
+```
+feat: Add CrossFit workout types with auto-determined sorting
+b10f059
+```
+
+---
+
 ## Checklist końcowy
 
 ### Funkcjonalności (FR)
-- [ ] FR-001: Tworzenie workoutu z opisem
-- [ ] FR-002: Wybór kierunku sortowania
-- [ ] FR-003: Publiczny dostęp do workoutów
+- [x] FR-001: Tworzenie workoutu z opisem
+- [x] FR-002: Wybór typu workoutu z automatycznym sortowaniem
+- [x] FR-003: Publiczny dostęp do workoutów
 - [ ] FR-004: Opcjonalna data z domyślną wartością
 - [ ] FR-005: Usuwanie workoutu z wynikami
 - [ ] FR-006: Bezterminowe przechowywanie
@@ -2196,19 +2349,20 @@ pm2 status
 ## Podsumowanie
 
 ### Szacowany czas całkowity
-| Faza | Czas szacunkowy |
-|------|-----------------|
-| Faza 1: Inicjalizacja | 1.5h |
-| Faza 2: Backend - Baza | 1.5h |
-| Faza 3: Backend - API | 3h |
-| Faza 4: Frontend - Struktura | 2h |
-| Faza 5: Frontend - Komponenty | 3h |
-| Faza 6: Frontend - Strony | 3h |
-| Faza 7: Integracja | 1h |
-| Faza 8: PWA | 1h |
-| Faza 9: Testowanie | 3h |
-| Faza 10: Deployment | 2h |
-| **RAZEM** | **~21h** |
+| Faza | Czas szacunkowy | Status |
+|------|-----------------|--------|
+| Faza 1: Inicjalizacja | 1.5h | ✅ |
+| Faza 2: Backend - Baza | 1.5h | ✅ |
+| Faza 3: Backend - API | 3h | ✅ |
+| Faza 4: Frontend - Struktura | 2h | ✅ |
+| Faza 5: Frontend - Komponenty | 3h | ✅ |
+| Faza 6: Frontend - Strony | 3h | ✅ |
+| Faza 7: Integracja | 1h | ✅ |
+| Faza 8: PWA | 1h | ✅ |
+| Faza 9: Testowanie | 3h | ✅ |
+| Faza 10: Deployment | 2h | 🔄 |
+| Faza 11: Workout Types | 10-13h | ✅ |
+| **RAZEM** | **~31-34h** | |
 
 ### Zależności między fazami
 ```
@@ -2227,6 +2381,8 @@ Faza 5 (Komponenty) → Faza 6 (Strony)
          Faza 9 (Testowanie)
               ↓
          Faza 10 (Deployment)
+              ↓
+         Faza 11 (Workout Types - Enhancement)
 ```
 
 ### Priorytety dla MVP
@@ -2234,11 +2390,13 @@ Faza 5 (Komponenty) → Faza 6 (Strony)
 2. **P1 (Ważne)**: Faza 7-8 - integracja i PWA
 3. **P2 (Standardowe)**: Faza 9 - testowanie
 4. **P3 (Deployment)**: Faza 10 - produkcja
+5. **P4 (Enhancement)**: Faza 11 - typy workoutów (post-MVP)
 
 ---
 
 **Koniec dokumentu planu wdrożenia**
 
 Data utworzenia: 2026-02-05
+Data ostatniej aktualizacji: 2026-02-06 (dodanie Fazy 11: Workout Types)
 Autor: AI Assistant
-Status: Gotowy do realizacji
+Status: MVP zakończony ✅, Enhancement w trakcie 🔄

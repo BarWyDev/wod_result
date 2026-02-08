@@ -13,6 +13,8 @@ Przechowuje informacje o utworzonych workoutach.
 | `description` | `TEXT` | `NOT NULL` | Opis treningu (bez limitu długości) |
 | `workout_date` | `DATE` | `NOT NULL DEFAULT CURRENT_DATE, CHECK (workout_date <= CURRENT_DATE)` | Data wykonania workoutu (nie może być w przyszłości) |
 | `sort_direction` | `VARCHAR(4)` | `NOT NULL DEFAULT 'desc', CHECK (sort_direction IN ('asc', 'desc'))` | Kierunek sortowania wyników |
+| `workout_type` | `VARCHAR(20)` | `NULLABLE, CHECK (workout_type IS NULL OR workout_type IN ('for_time', 'amrap', 'emom', 'tabata', 'chipper', 'ladder', 'load', 'custom'))` | Typ workoutu (for_time, amrap, emom, tabata, chipper, ladder, load, custom) |
+| `result_unit` | `VARCHAR(20)` | `NULLABLE, CHECK (result_unit IS NULL OR result_unit IN ('time', 'rounds', 'reps', 'weight', 'custom'))` | Jednostka wyniku (time, rounds, reps, weight, custom) |
 | `created_at` | `TIMESTAMP WITH TIME ZONE` | `NOT NULL DEFAULT NOW()` | Timestamp utworzenia rekordu |
 | `updated_at` | `TIMESTAMP WITH TIME ZONE` | `NOT NULL DEFAULT NOW()` | Timestamp ostatniej modyfikacji |
 
@@ -20,11 +22,16 @@ Przechowuje informacje o utworzonych workoutach.
 - `PRIMARY KEY` na `id`
 - B-tree index na `workout_date` (nazwa: `idx_workouts_workout_date`)
 - B-tree index na `created_at DESC` (nazwa: `idx_workouts_created_at_desc`)
+- B-tree index na `workout_type` (nazwa: `idx_workouts_type`)
 
 **Uwagi:**
 - `owner_token` jest generowany przez backend (UUID v4) przy tworzeniu workoutu
 - `sort_direction`: 'asc' = niższy wynik wygrywa, 'desc' = wyższy wynik wygrywa
 - `workout_date` ma CHECK constraint zapobiegający datom z przyszłości zgodnie z US-012
+- `workout_type` i `result_unit` są nullable dla zachowania kompatybilności wstecznej (NULL = custom)
+- Jeśli `workout_type` jest ustawiony, `sort_direction` i `result_unit` są automatycznie określane przez backend
+- Typy workoutów: for_time, amrap, emom, tabata, chipper, ladder, load, custom
+- Jednostki wyników: time, rounds, reps, weight, custom
 
 ---
 

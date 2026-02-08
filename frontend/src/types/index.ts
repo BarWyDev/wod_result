@@ -1,10 +1,18 @@
+export type WorkoutType = 'for_time' | 'amrap' | 'emom' | 'tabata' | 'chipper' | 'ladder' | 'load' | 'custom';
+
 export interface Workout {
   id: string;
   description: string;
   workoutDate: string;
   sortDirection: 'asc' | 'desc';
+  workoutType?: WorkoutType | null;
+  resultUnit?: string | null;
   createdAt: string;
   resultCount?: number;
+}
+
+export interface RoundDetails {
+  rounds: number[];
 }
 
 export interface Result {
@@ -14,6 +22,7 @@ export interface Result {
   gender: 'M' | 'F';
   resultValue: string;
   resultNumeric: string | null;
+  roundDetails?: RoundDetails | null;
   createdAt: string;
 }
 

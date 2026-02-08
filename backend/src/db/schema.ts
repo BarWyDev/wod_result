@@ -1,4 +1,4 @@
-import { pgTable, uuid, text, date, varchar, timestamp, numeric, char } from 'drizzle-orm/pg-core';
+import { pgTable, uuid, text, date, varchar, timestamp, numeric, char, jsonb } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
 export const workouts = pgTable('workouts', {
@@ -7,6 +7,8 @@ export const workouts = pgTable('workouts', {
   description: text('description').notNull(),
   workoutDate: date('workout_date').notNull().defaultNow(),
   sortDirection: varchar('sort_direction', { length: 4 }).notNull().default('desc'),
+  workoutType: varchar('workout_type', { length: 20 }),
+  resultUnit: varchar('result_unit', { length: 20 }),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });
@@ -19,6 +21,7 @@ export const results = pgTable('results', {
   gender: char('gender', { length: 1 }).notNull(),
   resultValue: text('result_value').notNull(),
   resultNumeric: numeric('result_numeric'),
+  roundDetails: jsonb('round_details'),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });
