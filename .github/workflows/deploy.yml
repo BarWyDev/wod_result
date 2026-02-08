@@ -1,0 +1,61 @@
+name: Deploy to mikr.us
+
+on:
+  push:
+    branches:
+      - feat/initial-implementation
+      - main
+
+jobs:
+  test:
+    name: Run tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install backend dependencies
+        run: cd backend && npm ci
+
+      - name: Run backend tests
+        run: cd backend && npm test
+
+      - name: Install frontend dependencies
+        run: cd frontend && npm ci
+
+      - name: Run frontend tests
+        run: cd frontend && npm test
+
+  deploy:
+    name: Deploy to server
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/feat/initial-implementation' || github.ref == 'refs/heads/main'
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 10114
+          script: |
+            cd /var/www/wod-result
+            git pull origin ${{ github.ref_name }}
+
+            # Backend
+            cd /var/www/wod-result/backend
+            npm install --production
+            npm run build
+            pm2 restart wod-result-api
+
+            # Frontend
+            cd /var/www/wod-result/frontend
+            echo 'VITE_API_URL=${{ secrets.VITE_API_URL }}' > .env
+            npm install
+            npm run build
+
+            echo "Deploy complete!"
