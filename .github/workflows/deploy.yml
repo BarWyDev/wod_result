@@ -42,6 +42,7 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 10114
+          script_stop: true
           script: |
             cd /var/www/wod-result
             git pull origin ${{ github.ref_name }}
@@ -49,7 +50,7 @@ jobs:
             # Backend
             cd /var/www/wod-result/backend
             npm install
-            npm run db:run-migrations
+            node migrate.cjs
             npm run build
             npm prune --production
             pm2 restart wod-result-api
