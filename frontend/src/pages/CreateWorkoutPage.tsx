@@ -101,8 +101,17 @@ export default function CreateWorkoutPage() {
           <Input
             label="Data workoutu"
             type="date"
-            {...register('workoutDate')}
-            max={new Date().toISOString().split('T')[0]}
+            {...register('workoutDate', {
+              validate: {
+                notTooFarInFuture: (value) => {
+                  const selectedDate = new Date(value);
+                  const oneYearFromNow = new Date();
+                  oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1);
+                  return selectedDate <= oneYearFromNow || 'Data nie może być późniejsza niż 1 rok w przyszłość';
+                }
+              }
+            })}
+            error={errors.workoutDate?.message}
           />
 
           <div>
