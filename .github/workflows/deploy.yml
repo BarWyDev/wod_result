@@ -48,8 +48,10 @@ jobs:
 
             # Backend
             cd /var/www/wod-result/backend
-            npm install --production
+            npm install
+            npm run db:run-migrations
             npm run build
+            npm prune --production
             pm2 restart wod-result-api
 
             # Frontend
