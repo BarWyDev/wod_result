@@ -1,4 +1,4 @@
-CREATE TABLE "results" (
+CREATE TABLE IF NOT EXISTS "results" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"workout_id" uuid NOT NULL,
 	"result_token" uuid NOT NULL,
@@ -10,7 +10,7 @@ CREATE TABLE "results" (
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "workouts" (
+CREATE TABLE IF NOT EXISTS "workouts" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"owner_token" uuid NOT NULL,
 	"description" text NOT NULL,
@@ -20,4 +20,7 @@ CREATE TABLE "workouts" (
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-ALTER TABLE "results" ADD CONSTRAINT "results_workout_id_workouts_id_fk" FOREIGN KEY ("workout_id") REFERENCES "public"."workouts"("id") ON DELETE cascade ON UPDATE no action;
+DO $$ BEGIN
+  ALTER TABLE "results" ADD CONSTRAINT "results_workout_id_workouts_id_fk" FOREIGN KEY ("workout_id") REFERENCES "public"."workouts"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION WHEN duplicate_object THEN NULL;
+END $$;
