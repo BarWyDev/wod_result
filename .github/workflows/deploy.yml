@@ -42,25 +42,34 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 10114
-          script_stop: true
           script: |
+            set -e
+
             cd /var/www/wod-result
             git pull origin ${{ github.ref_name }}
 
             # Backend
             cd /var/www/wod-result/backend
             npm install
-            echo "--- Running migrations ---"
+
+            echo "=== Running migrations ==="
             node migrate.cjs
-            echo "--- Building backend ---"
+
+            echo "=== Building backend ==="
             rm -rf dist
             npm run build
-            echo "--- Verifying build ---"
-            grep -c "comment" dist/db/schema.js && echo "Schema OK: comment field found" || echo "ERROR: comment field missing from schema!"
-            npm prune --production
-            pm2 restart wod-result-api
-            echo "--- PM2 status ---"
-            pm2 show wod-result-api | head -20
+            grep -c "comment" dist/db/schema.js && echo "Schema OK" || exit 1
+
+            npm prune --omit=dev
+
+            echo "=== Restarting PM2 ==="
+            pm2 delete wod-result-api || true
+            pm2 start dist/index.js --name wod-result-api --cwd /var/www/wod-result/backend
+            pm2 save
+            sleep 2
+            pm2 ls
+            echo "=== Verifying API ==="
+            curl -s http://localhost:3001/api/workouts | head -c 200
 
             # Frontend
             cd /var/www/wod-result/frontend
@@ -68,4 +77,4 @@ jobs:
             npm install
             npm run build
 
-            echo "Deploy complete!"
+            echo "=== Deploy complete ==="
