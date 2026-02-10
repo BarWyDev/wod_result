@@ -8,6 +8,13 @@
       "when": 1770312295657,
       "tag": "0000_overrated_karma",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1770710296583,
+      "tag": "0001_plain_tigra",
+      "breakpoints": true
     }
   ]
 }

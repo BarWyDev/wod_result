@@ -25,6 +25,27 @@ router.post('/', workoutLimiter, async (req, res, next) => {
       return res.status(400).json({ error: 'Nieprawidłowy typ workoutu' });
     }
 
+    // Validate workoutDate if provided - not more than 1 year in the future
+    if (workoutDate) {
+      // Validate date format (YYYY-MM-DD)
+      const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+      if (!dateRegex.test(workoutDate)) {
+        return res.status(400).json({ error: 'Nieprawidłowy format daty. Użyj formatu YYYY-MM-DD' });
+      }
+
+      const selectedDate = new Date(workoutDate);
+      const oneYearFromNow = new Date();
+      oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1);
+
+      if (isNaN(selectedDate.getTime())) {
+        return res.status(400).json({ error: 'Nieprawidłowy format daty' });
+      }
+
+      if (selectedDate > oneYearFromNow) {
+        return res.status(400).json({ error: 'Data nie może być późniejsza niż 1 rok w przyszłość' });
+      }
+    }
+
     // If workoutType is provided, sortDirection is auto-determined
     // If no workoutType, sortDirection is required (backward compatibility)
     if (!workoutType && !sortDirection) {
