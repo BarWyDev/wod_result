@@ -50,10 +50,17 @@ jobs:
             # Backend
             cd /var/www/wod-result/backend
             npm install
+            echo "--- Running migrations ---"
             node migrate.cjs
+            echo "--- Building backend ---"
+            rm -rf dist
             npm run build
+            echo "--- Verifying build ---"
+            grep -c "comment" dist/db/schema.js && echo "Schema OK: comment field found" || echo "ERROR: comment field missing from schema!"
             npm prune --production
             pm2 restart wod-result-api
+            echo "--- PM2 status ---"
+            pm2 show wod-result-api | head -20
 
             # Frontend
             cd /var/www/wod-result/frontend
