@@ -49,6 +49,8 @@ export const resultsApi = {
     gender: 'M' | 'F';
     resultValue: string;
     roundDetails?: RoundDetails | null;
+    comment?: string | null;
+    isDnf?: boolean;
   }) => {
     const { data } = await api.post<{ result: Result; resultToken: string }>('/results', result);
     return data;
@@ -62,6 +64,8 @@ export const resultsApi = {
       gender?: 'M' | 'F';
       resultValue?: string;
       roundDetails?: RoundDetails | null;
+      comment?: string | null;
+      isDnf?: boolean;
     }
   ) => {
     const response = await api.put<{ result: Result }>(`/results/${id}`, {

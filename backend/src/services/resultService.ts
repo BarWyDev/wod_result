@@ -11,6 +11,8 @@ export async function addResult(data: {
   gender: 'M' | 'F';
   resultValue: string;
   roundDetails?: { rounds: number[] } | null;
+  comment?: string | null;
+  isDnf?: boolean;
 }): Promise<{ result: Result; resultToken: string }> {
   // Sprawdź czy workout istnieje
   const [workout] = await db
@@ -23,6 +25,27 @@ export async function addResult(data: {
   }
 
   const resultToken = randomUUID();
+
+  // Obsługa DNF
+  if (data.isDnf) {
+    const [result] = await db.insert(results).values({
+      workoutId: data.workoutId,
+      resultToken,
+      athleteName: data.athleteName,
+      gender: data.gender,
+      resultValue: 'DNF',
+      resultNumeric: null,
+      roundDetails: null,
+      comment: data.comment || null,
+      isDnf: true,
+    }).returning();
+
+    if (!result) {
+      throw new AppError('Nie udało się dodać wyniku', 500);
+    }
+
+    return { result, resultToken };
+  }
 
   // Oblicz resultValue z rund jeśli są dostarczone
   let finalResultValue = data.resultValue;
@@ -43,6 +66,8 @@ export async function addResult(data: {
     resultValue: finalResultValue,
     resultNumeric: resultNumeric?.toString() || null,
     roundDetails: data.roundDetails || null,
+    comment: data.comment || null,
+    isDnf: false,
   }).returning();
 
   if (!result) {
@@ -75,6 +100,8 @@ export async function updateResult(
     gender?: 'M' | 'F';
     resultValue?: string;
     roundDetails?: { rounds: number[] } | null;
+    comment?: string | null;
+    isDnf?: boolean;
   }
 ): Promise<Result> {
   const [existing] = await db
@@ -94,6 +121,33 @@ export async function updateResult(
 
   if (data.athleteName) updateData.athleteName = data.athleteName;
   if (data.gender) updateData.gender = data.gender;
+
+  // Obsługa comment
+  if (data.comment !== undefined) {
+    updateData.comment = data.comment;
+  }
+
+  // Obsługa DNF
+  if (data.isDnf !== undefined) {
+    updateData.isDnf = data.isDnf;
+    if (data.isDnf) {
+      updateData.resultValue = 'DNF';
+      updateData.resultNumeric = null;
+      updateData.roundDetails = null;
+
+      const [updated] = await db
+        .update(results)
+        .set(updateData)
+        .where(eq(results.id, id))
+        .returning();
+
+      if (!updated) {
+        throw new AppError('Nie udało się zaktualizować wyniku', 500);
+      }
+
+      return updated;
+    }
+  }
 
   // Obsługa roundDetails
   if (data.roundDetails !== undefined) {

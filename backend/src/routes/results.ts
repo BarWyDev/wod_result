@@ -10,7 +10,7 @@ const router = Router();
 // POST /api/results - Dodanie wyniku
 router.post('/', resultLimiter, async (req, res, next) => {
   try {
-    const { workoutId, athleteName, gender, resultValue, roundDetails } = req.body;
+    const { workoutId, athleteName, gender, resultValue, roundDetails, comment, isDnf } = req.body;
 
     if (!workoutId || !athleteName || !gender) {
       return res.status(400).json({ error: 'Brak wymaganych pól' });
@@ -30,6 +30,18 @@ router.post('/', resultLimiter, async (req, res, next) => {
 
     if (!['M', 'F'].includes(gender)) {
       return res.status(400).json({ error: 'Nieprawidłowa wartość płci' });
+    }
+
+    // Walidacja comment
+    if (comment !== undefined && comment !== null) {
+      if (typeof comment !== 'string' || comment.length > 500) {
+        return res.status(400).json({ error: 'Komentarz może mieć maksymalnie 500 znaków' });
+      }
+    }
+
+    // Walidacja isDnf
+    if (isDnf !== undefined && typeof isDnf !== 'boolean') {
+      return res.status(400).json({ error: 'isDnf musi być wartością boolean' });
     }
 
     // Walidacja roundDetails jeśli są dostarczone
@@ -53,8 +65,8 @@ router.post('/', resultLimiter, async (req, res, next) => {
       if (!allValid) {
         return res.status(400).json({ error: 'Wszystkie rundy muszą być prawidłowymi nieujemnymi liczbami' });
       }
-    } else if (!resultValue) {
-      // Jeśli nie ma roundDetails, wymagamy resultValue
+    } else if (!isDnf && !resultValue) {
+      // Jeśli nie ma roundDetails i nie jest DNF, wymagamy resultValue
       return res.status(400).json({ error: 'Brak wymaganych pól' });
     }
 
@@ -64,6 +76,8 @@ router.post('/', resultLimiter, async (req, res, next) => {
       gender,
       resultValue: resultValue || '',
       roundDetails,
+      comment: comment || null,
+      isDnf: isDnf || false,
     });
 
     res.status(201).json({ result, resultToken });
@@ -103,7 +117,7 @@ router.put('/:id', async (req, res, next) => {
       return res.status(400).json({ error: 'Nieprawidłowy format ID' });
     }
 
-    const { resultToken, athleteName, gender, resultValue, roundDetails } = req.body;
+    const { resultToken, athleteName, gender, resultValue, roundDetails, comment, isDnf } = req.body;
 
     if (!resultToken || !UUID_REGEX.test(resultToken)) {
       return res.status(400).json({ error: 'Brak lub nieprawidłowy token autoryzacji' });
@@ -115,6 +129,18 @@ router.put('/:id', async (req, res, next) => {
 
     if (resultValue && (typeof resultValue !== 'string' || resultValue.length > 100)) {
       return res.status(400).json({ error: 'Wynik musi mieć maksymalnie 100 znaków' });
+    }
+
+    // Walidacja comment
+    if (comment !== undefined && comment !== null) {
+      if (typeof comment !== 'string' || comment.length > 500) {
+        return res.status(400).json({ error: 'Komentarz może mieć maksymalnie 500 znaków' });
+      }
+    }
+
+    // Walidacja isDnf
+    if (isDnf !== undefined && typeof isDnf !== 'boolean') {
+      return res.status(400).json({ error: 'isDnf musi być wartością boolean' });
     }
 
     // Walidacja roundDetails jeśli są dostarczone
@@ -145,6 +171,8 @@ router.put('/:id', async (req, res, next) => {
       gender,
       resultValue,
       roundDetails,
+      comment,
+      isDnf,
     });
 
     res.json({ result });
