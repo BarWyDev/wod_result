@@ -162,7 +162,7 @@ export default function WorkoutDetailPage() {
                 {getWorkoutTypeLabel(workout.workoutType)}
               </span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-semibold text-slate-900 mb-3 leading-tight">
+            <h1 className="text-2xl sm:text-3xl font-semibold text-slate-900 mb-3 leading-tight whitespace-pre-line">
               {workout.description}
             </h1>
             <div className="flex items-center gap-5 text-sm text-slate-700">

@@ -31,7 +31,7 @@ export function WorkoutCard({ workout, isOwner }: WorkoutCardProps) {
               {getWorkoutTypeLabel(workout.workoutType)}
             </span>
           </div>
-          <p className="text-slate-900 line-clamp-2 text-base leading-relaxed">
+          <p className="text-slate-900 line-clamp-2 text-base leading-relaxed whitespace-pre-line">
             {workout.description}
           </p>
         </div>
