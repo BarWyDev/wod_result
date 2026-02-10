@@ -87,6 +87,8 @@ Located in `backend/src/db/schema.ts`:
 - `resultValue` (text) - raw result value (flexible format)
 - `resultNumeric` (numeric, nullable) - parsed numeric value for sorting
 - `roundDetails` (jsonb, nullable) - per-round scores for EMOM/Tabata workouts (format: `{"rounds": [10, 12, 11, ...]}`)
+- `comment` (text, nullable) - optional comment visible to all users (e.g., "Scaled", "RX")
+- `isDnf` (boolean, not null, default false) - whether the athlete did not finish
 - `createdAt`, `updatedAt` (timestamps)
 
 ### Workout Types
@@ -117,6 +119,12 @@ The `parseResultNumeric()` function converts various result formats to numeric v
 1. **Time formats:** `mm:ss` or `hh:mm:ss` → converted to total seconds
 2. **Numeric formats:** Extracts first number from string (e.g., "150 reps" → 150)
 3. **Non-numeric:** Returns `null` (these results appear at the end of rankings)
+
+### DNF and Comment Support
+
+- **DNF (Did Not Finish):** When `isDnf` is `true`, `resultValue` is set to "DNF" and `resultNumeric` to `null`, ensuring DNF results sort last
+- **Comment:** Optional text field (max 500 chars) displayed below the result in italics (e.g., "Scaled", "RX", "bez pasa")
+- **Numeric-only inputs:** Result values are entered via numeric inputs (`<input type="number">`) for all workout types. Time-based workouts (For Time, Chipper) use two fields: minutes + seconds, displayed as `mm:ss`
 
 The `calculateRoundSum()` function calculates the sum of round-by-round scores:
 - Takes `roundDetails` object: `{ rounds: number[] }`
@@ -195,6 +203,11 @@ Filtering is handled server-side in `workoutService.getWorkouts()`.
 - Backend API: Validates date format (YYYY-MM-DD) and range in `workouts.ts`
 - Database: CHECK constraint `workouts_workout_date_check` allows dates up to `CURRENT_DATE + INTERVAL '1 year'`
 - Migration: `0004_allow_future_dates.sql` updated the constraint (previously only allowed past/current dates)
+
+### DNF and Comments
+
+- Migration: `0005_add_comment_and_dnf.sql` adds `comment` (TEXT) and `is_dnf` (BOOLEAN) columns to results table
+- Existing results with `result_value = 'DNF'` are automatically migrated to `is_dnf = true`
 
 ### Cascade Deletion
 

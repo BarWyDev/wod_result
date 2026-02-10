@@ -15,7 +15,9 @@ async function runMigrations() {
       '0000_overrated_karma.sql',
       '0001_triggers_and_indexes.sql',
       '0002_add_workout_types.sql',
-      '0003_add_round_details.sql'
+      '0003_add_round_details.sql',
+      '0004_allow_future_dates.sql',
+      '0005_add_comment_and_dnf.sql'
     ];
 
     for (const file of migrationFiles) {

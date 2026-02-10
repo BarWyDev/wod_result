@@ -44,8 +44,11 @@ export function ResultRow({ result, position, onEdit, onDelete }: ResultRowProps
           </div>
 
           <div className="flex items-center gap-1 sm:gap-2 shrink-0">
-            <span className="font-mono text-base sm:text-lg font-medium text-slate-900">
-              {result.resultValue}
+            <span className={clsx(
+              "font-mono text-base sm:text-lg font-medium",
+              result.isDnf ? 'text-red-600' : 'text-slate-900'
+            )}>
+              {result.isDnf ? 'DNF' : result.resultValue}
             </span>
 
             {hasRoundDetails && (
@@ -60,6 +63,12 @@ export function ResultRow({ result, position, onEdit, onDelete }: ResultRowProps
             )}
           </div>
         </div>
+
+        {result.comment && (
+          <div className="mt-1 ml-8 sm:ml-10">
+            <span className="text-sm text-slate-500 italic">{result.comment}</span>
+          </div>
+        )}
 
         {isOwner && (
           <div className="flex gap-3 mt-1.5 ml-8 sm:ml-10">

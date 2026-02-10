@@ -86,6 +86,7 @@ export default function CreateWorkoutPage() {
               {...register('description', {
                 required: 'Opis workoutu jest wymagany',
                 minLength: { value: 5, message: 'Opis musi mieć co najmniej 5 znaków' },
+                maxLength: { value: 5000, message: 'Opis może mieć maksymalnie 5000 znaków' },
               })}
               rows={4}
               className="w-full px-4 py-3 border border-slate-300 rounded bg-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 hover:border-slate-400"

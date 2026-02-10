@@ -23,6 +23,8 @@ export interface Result {
   resultValue: string;
   resultNumeric: string | null;
   roundDetails?: RoundDetails | null;
+  comment?: string | null;
+  isDnf: boolean;
   createdAt: string;
 }
 
