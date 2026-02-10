@@ -1,9 +1,14 @@
 import { db } from '../db';
 import { workouts, results, Workout, NewWorkout } from '../db/schema';
-import { eq, gte, desc, sql } from 'drizzle-orm';
+import { eq, gte, lte, and, desc, sql } from 'drizzle-orm';
 import { randomUUID } from 'crypto';
 import { AppError } from '../middleware/errorHandler';
 import { WorkoutType, getWorkoutTypeConfig } from '../constants/workoutTypes';
+
+// Helper function to format date in local timezone as YYYY-MM-DD
+function formatLocalDate(date: Date): string {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+}
 
 export async function createWorkout(data: {
   description: string;
@@ -40,21 +45,8 @@ export async function createWorkout(data: {
 }
 
 export async function getWorkouts(dateFilter?: string): Promise<any[]> {
-  let dateFrom: string | undefined;
-
-  if (dateFilter === 'today') {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    dateFrom = today.toISOString().split('T')[0];
-  } else if (dateFilter === '7days') {
-    const date = new Date();
-    date.setDate(date.getDate() - 7);
-    dateFrom = date.toISOString().split('T')[0];
-  } else if (dateFilter === '30days') {
-    const date = new Date();
-    date.setDate(date.getDate() - 30);
-    dateFrom = date.toISOString().split('T')[0];
-  }
+  const today = new Date();
+  const todayStr = formatLocalDate(today);
 
   let query = db
     .select({
@@ -71,8 +63,25 @@ export async function getWorkouts(dateFilter?: string): Promise<any[]> {
     .leftJoin(results, eq(workouts.id, results.workoutId))
     .groupBy(workouts.id);
 
-  if (dateFrom) {
-    query = query.where(gte(workouts.workoutDate, dateFrom)) as any;
+  if (dateFilter === 'today') {
+    // Only workouts from today
+    query = query.where(sql`${workouts.workoutDate} = ${todayStr}`) as any;
+  } else if (dateFilter === '7days') {
+    // Workouts from last 7 days (not including future dates)
+    const date7 = new Date();
+    date7.setDate(date7.getDate() - 7);
+    const dateFrom = formatLocalDate(date7);
+    query = query.where(
+      sql`${workouts.workoutDate} >= ${dateFrom} AND ${workouts.workoutDate} <= ${todayStr}`
+    ) as any;
+  } else if (dateFilter === '30days') {
+    // Workouts from last 30 days (not including future dates)
+    const date30 = new Date();
+    date30.setDate(date30.getDate() - 30);
+    const dateFrom = formatLocalDate(date30);
+    query = query.where(
+      sql`${workouts.workoutDate} >= ${dateFrom} AND ${workouts.workoutDate} <= ${todayStr}`
+    ) as any;
   }
 
   return query.orderBy(desc(workouts.createdAt));
