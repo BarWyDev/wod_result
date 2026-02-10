@@ -44,6 +44,13 @@ jobs:
           port: 10114
           script: |
             set -e
+            export PATH="$HOME/.npm-global/bin:$HOME/.nvm/versions/node/$(node -v)/bin:/usr/local/bin:$PATH"
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+
+            echo "=== Node: $(node -v), npm: $(npm -v) ==="
+            echo "=== PM2 path: $(which pm2 || echo 'NOT FOUND - installing') ==="
+            which pm2 || npm install -g pm2
 
             cd /var/www/wod-result
             git pull origin ${{ github.ref_name }}
