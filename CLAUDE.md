@@ -188,6 +188,14 @@ Workouts can be filtered by:
 
 Filtering is handled server-side in `workoutService.getWorkouts()`.
 
+### Future Date Support
+
+**Workout dates can be scheduled up to 1 year in the future:**
+- Frontend: Date input validation in `CreateWorkoutPage.tsx` (max 1 year ahead)
+- Backend API: Validates date format (YYYY-MM-DD) and range in `workouts.ts`
+- Database: CHECK constraint `workouts_workout_date_check` allows dates up to `CURRENT_DATE + INTERVAL '1 year'`
+- Migration: `0004_allow_future_dates.sql` updated the constraint (previously only allowed past/current dates)
+
 ### Cascade Deletion
 
 When a workout is deleted, all associated results are automatically deleted via database CASCADE constraint.
