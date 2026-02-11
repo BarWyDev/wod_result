@@ -272,7 +272,7 @@ export function AddResultForm({ workoutId }: AddResultFormProps) {
                       <span className="text-sm font-medium text-slate-600 w-12">R{idx + 1}</span>
                       <input
                         type="number"
-                        value={round}
+                        value={round || ''}
                         onChange={(e) => updateRound(idx, parseInt(e.target.value) || 0)}
                         min={0}
                         className="flex-1 rounded border border-slate-300 px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
