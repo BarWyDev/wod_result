@@ -26,7 +26,8 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
           <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm" aria-hidden="true" />
         </Transition.Child>
 
-        <div className="fixed inset-0 flex items-center justify-center p-4">
+        <div className="fixed inset-0 overflow-y-auto p-4">
+          <div className="flex min-h-full items-center justify-center">
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-200"
@@ -52,6 +53,7 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
               {children}
             </Dialog.Panel>
           </Transition.Child>
+          </div>
         </div>
       </Dialog>
     </Transition>
