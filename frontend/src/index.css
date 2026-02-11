@@ -31,7 +31,7 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-html, body {
+body {
   overflow-x: hidden;
 }
 
